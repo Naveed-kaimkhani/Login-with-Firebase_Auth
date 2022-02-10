@@ -1,8 +1,7 @@
-import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_user_login/HomeScreen.dart';
 import 'package:flutter/material.dart';
 class LoginScreen extends StatefulWidget {
   const LoginScreen({ Key? key }) : super(key: key);
@@ -18,16 +17,23 @@ class _LoginScreenState extends State<LoginScreen> {
   Future<void> login(String email,String pass)async{
     FirebaseAuth auth=FirebaseAuth.instance;
     FirebaseFirestore db=FirebaseFirestore.instance;
+    print(email);
+    print(pass);
 
     try {
+      print("in try");
       final UserCredential User=await auth.signInWithEmailAndPassword(email: email, password: pass);
       final DocumentSnapshot snapshot =  await  db.collection("users").doc(User.user!.uid).get();
       final data=snapshot.data();
+      print("user loggedin");
       print(data);
-      print(data["password"]);
-      print(data["username"]);
+      Navigator.of(context).push(MaterialPageRoute(
+        builder: (context) => HomeScreen(name: email,username: pass,),  )
+        );
+      //print(data["password"]);
+      //print(data["username"]);
     } catch (e) {
-      
+      print(e);
     }
   }
   @override
